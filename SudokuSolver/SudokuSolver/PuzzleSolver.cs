@@ -10,6 +10,7 @@ namespace SudokuSolver
 {
   public abstract class PuzzleSolver
   {
+    public string Name { get; protected set; }
     public Stopwatch SolveTimer { get; protected set; }
     public Puzzle Sudoku { get; protected set; }
 
@@ -24,26 +25,26 @@ namespace SudokuSolver
       return true;
     }
 
-    public bool SolvePuzzle()
-    {
-      bool notFinished = true;
-      while (notFinished)
-      {
-        notFinished = false;
-        for (int i = 0; i < Sudoku.Size; i++)
-        {
-          for (int j = 0; j < Sudoku.Size; j++)
-          {
-            if(Sudoku.Grid[i,j].Value == '-')
-            {
-              notFinished = SolvePoint(i, j) ? true : false;
-            }
-          }
-        }
-      }
+    //public bool SolvePuzzle()
+    //{
+    //  bool notFinished = true;
+    //  while (notFinished)
+    //  {
+    //    notFinished = false;
+    //    for (int i = 0; i < Sudoku.Size; i++)
+    //    {
+    //      for (int j = 0; j < Sudoku.Size; j++)
+    //      {
+    //        if(Sudoku.Grid[i,j].Value == '-')
+    //        {
+    //          notFinished = SolvePoint(i, j) ? true : false;
+    //        }
+    //      }
+    //    }
+    //  }
 
-      return Sudoku.IsSolved();      
-    }    
+    //  return Sudoku.IsSolved();      
+    //}    
 
     protected bool HasCompleteSet( Cell[] superCell)
     {
@@ -64,11 +65,11 @@ namespace SudokuSolver
       return false;
     }
 
-    public abstract bool SolvePoint(int row, int col );
+    public abstract void SolvePoint(int row, int col );
     
     public string PrintTime( )
     {
-      var output = $"{this.GetType().Name}: {SolveTimer.Elapsed}";
+      var output = $"{Name}: {SolveTimer.Elapsed}";
       return output;
     }
   }

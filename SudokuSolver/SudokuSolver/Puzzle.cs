@@ -10,6 +10,7 @@ namespace SudokuSolver
   public class Puzzle
   {
     public int Size { get; private set; }
+    public int SuperCellSize { get; private set; }
 
     public Cell[,] OriginalGrid { get; private set; }
     public Cell[,] Grid { get; private set; }
@@ -18,6 +19,7 @@ namespace SudokuSolver
     public Puzzle( int size, Cell[,] grid, List<char> symbolSet )
     {
       Size = size;
+      SuperCellSize = Convert.ToInt32(Math.Sqrt(Size));
       OriginalGrid = new Cell[Size, Size];
       Grid = new Cell[Size, Size];
       GridDeepCopy(grid);
@@ -37,36 +39,110 @@ namespace SudokuSolver
     }
 
     public bool IsSolved( )
-    {
+    { 
+      // Check each cell for '-' character.
       for (int i = 0; i < Size; i++)
-      {
+      {        
         for (int j = 0; j < Size; j++)
         {
           if (Grid[i, j].Value == '-')
           {
             return false;
+          }                 
+        }
+      }
+
+      // Check rows and cols for complete sets
+      for (int i = 0; i < Size; i++)
+      {
+        if (!IsRowSolved(i)) { return false; }
+        if(!IsColSolved(i)) { return false; }
+      }
+
+      // Check houses for complete sets
+      for (int i = 0; i < Size; i += SuperCellSize)
+      {
+        for (int j = 0; j < Size; i += SuperCellSize)
+        {
+          if(!IsHouseSolved(i, j))
+          {
+            return false;
           }
         }
       }
+
       return true;
     }
 
-    public Cell[] GetSuperCell( int row, int col )
+    private bool IsRowSolved(int row)
+    {
+      var superCellSymbols = new List<char>(SymbolSet);
+
+      for (int j = 0; j < Size; j++)
+      {
+        if(superCellSymbols.Contains(Grid[row, j].Value))
+        {
+          superCellSymbols.Remove(Grid[row, j].Value);
+        }
+      }
+
+      if(superCellSymbols.Count > 0) { return false; }
+
+      return true;
+    }
+
+    private bool IsColSolved( int col )
+    {
+      var superCellSymbols = new List<char>(SymbolSet);
+
+      for (int i = 0; i < Size; i++)
+      {
+        if (superCellSymbols.Contains(Grid[i, col].Value))
+        {
+          superCellSymbols.Remove(Grid[i, col].Value);
+        }
+      }
+
+      if (superCellSymbols.Count > 0) { return false; }
+
+      return true;
+    }
+
+    private bool IsHouseSolved(int row, int col )
+    {
+      var superCellSymbols = new List<char>(SymbolSet);
+
+      for (int i = row; i < row + SuperCellSize; i++)
+      {
+        for (int j = col; j < col + SuperCellSize; j++)
+        {
+          if (superCellSymbols.Contains(Grid[i, j].Value))
+          {
+            superCellSymbols.Remove(Grid[i, j].Value);
+          }
+        }
+      }
+      if (superCellSymbols.Count > 0) { return false; }
+
+      return true;
+    }
+
+
+    public Cell[] GetHouse( int row, int col )
     {
       if (row < 0 || row > Size - 1 || col < 0 || col > Size - 1)
       {
         throw new Exception("Invalid bounds");
       }
 
-      var superCellSize = (Int32)Math.Sqrt(Size);
       var cellArr = new List<Cell>(Size);
 
-      GetTopLeft(row, col, out int tlRow, out int tlCol, superCellSize);
+      GetTopLeft(row, col, out int tlRow, out int tlCol);
       
 
-      for (int i = tlRow; i < tlRow + superCellSize; i++)
+      for (int i = tlRow; i < tlRow + SuperCellSize; i++)
       {
-        for (int j = tlCol; j < tlCol + superCellSize; j++)
+        for (int j = tlCol; j < tlCol + SuperCellSize; j++)
         {
           cellArr.Add(Grid[i, j]);
         }
@@ -75,14 +151,14 @@ namespace SudokuSolver
       return cellArr.ToArray();
     }
 
-    private void GetTopLeft( int row, int col, out int tlRow, out int tlCol, int size )
+    private void GetTopLeft( int row, int col, out int tlRow, out int tlCol)
     {
       tlRow = -1;
       tlCol = -1;
-      for (int i = size; i > 0; i--)
+      for (int i = SuperCellSize; i > 0; i--)
       {
-        if (row >= i * size - size) { tlRow = i * size - size; }
-        if (col >= i * size - size) { tlCol = i * size - size; }
+        if (row >= i * SuperCellSize - SuperCellSize) { tlRow = i * SuperCellSize - SuperCellSize; }
+        if (col >= i * SuperCellSize - SuperCellSize) { tlCol = i * SuperCellSize - SuperCellSize; }
       }
     }
 

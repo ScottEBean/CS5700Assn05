@@ -8,48 +8,36 @@ namespace SudokuSolver
 {
   public class OneOptionSolver : PuzzleSolver
   {
-    public OneOptionSolver(Puzzle puzzle): base(puzzle) { Sudoku = puzzle; }
 
-    public override bool SolvePoint(int row, int col )
+    public OneOptionSolver( Puzzle puzzle ) : base(puzzle) { Name = "One Option Solver"; }
+
+    public override void SolvePoint( int row, int col )
     {
       SolveTimer.Start();
 
-      try
-      {
-        return LastOption(row, col, Sudoku.GetSuperCell(row, col)) ||
-               LastOption(row, col, Sudoku.GetSuperRow(row)) ||
-               LastOption(row, col, Sudoku.GetSuperCol(col));
-      }
-      finally
-      {
-        SolveTimer.Stop();
-      }
+
+      LastOption(row, col, Sudoku.GetHouse(row, col));
+      LastOption(row, col, Sudoku.GetSuperRow(row));
+      LastOption(row, col, Sudoku.GetSuperCol(col));
+
+      SolveTimer.Stop();
+
     }
 
-    private bool LastOption(int row, int col, Cell[] superCell )
+    private void LastOption( int row, int col, Cell[] superCell )
     {
-      SolveTimer.Start();    
 
-      try
+      var dashCount = superCell.Where(cell => cell.Value == '-').Count();
+
+      if (dashCount == 1)
       {
-        var dashCount = superCell.Where(cell => cell.Value == '-').Count();
-
-        if (dashCount == 1)
+        for (int i = 0; i < Sudoku.Size; i++)
         {
-          for (int i = 0; i < Sudoku.Size; i++)
-          {
-            Sudoku.Grid[row, col].ValidOptions.Remove(superCell[i].Value);
-          }
-
-          Sudoku.Grid[row, col].Value = Sudoku.Grid[row, col].ValidOptions[0];
-
-          return true;
+          Sudoku.Grid[row, col].ValidOptions.Remove(superCell[i].Value);
         }
-        return false;
-      }
-      finally
-      {
-        SolveTimer.Stop();
+
+        Sudoku.Grid[row, col].Value = Sudoku.Grid[row, col].ValidOptions[0];
+        
       }
     }
   }

@@ -11,13 +11,17 @@ namespace SudokuSolver
   {
     static void Main( string[] args )
     {
-      string inputFilePath;
-      string outputFilePath;     
+      string inputFilePath = null;
+      string outputFilePath = null;
+      string inputDirectory = null;
+      string outputDirectory = null;
+      List<Puzzle> puzzles = new List<Puzzle>();
+      Puzzle puzzle = null;
 
       if (args.Length == 0)
       {
-        Console.WriteLine("Please provide an input file path.");
-        Console.WriteLine("Additionally, an output path may be specified as an argument after the input path.");
+        Console.WriteLine("Please provide an input file path or directory.");
+        Console.WriteLine("Additionally, an output path/directory may be specified as an argument after the input path/directory.");
         Console.WriteLine("\n\nPress Any Key to Exit");
         Console.ReadLine();
         return;
@@ -37,20 +41,44 @@ namespace SudokuSolver
 
       if(args.Length > 1)
       {
-        inputFilePath = args[0];
-        outputFilePath = args[1];
+        if (Directory.Exists(args[0]))
+        {
+          inputDirectory = args[0];
+          outputDirectory = args[1];
+        }
+        else
+        {
+          inputFilePath = args[0];
+          outputFilePath = args[1];
+        }
       }
       else
       {
-        inputFilePath = args[0];
+        if (Directory.Exists(args[0]))
+        {
+          inputDirectory = args[0];
+        }
+        else
+        {
+          inputFilePath = args[0];
+        }
       }
 
 
+      if (inputDirectory.Length > 1)
+      {
+        var inputFiles = Directory.EnumerateFiles(inputDirectory, "*.txt");
+        foreach (var file in inputFiles)
+        {
+          puzzles.Add(new PuzzleCreator(inputFilePath).CreatePuzzle());
+        }
+      }
+      else
+      {
+        puzzle = new PuzzleCreator(inputFilePath).CreatePuzzle();
+      }
 
-
-      Puzzle sudokuPuzzle = new PuzzleCreator(inputFilePath).CreatePuzzle();
-
-      sudokuPuzzle.ConsolePrint();
+      //do stuff on puzzles or puzzle here
 
 
       Console.WriteLine("\n\nPress Any Key to Exit");

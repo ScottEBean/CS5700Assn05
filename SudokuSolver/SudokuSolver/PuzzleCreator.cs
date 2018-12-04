@@ -66,7 +66,15 @@ namespace SudokuSolver
 
         for (int j = 0; j < PuzzleSize; j++)
         {
-          Grid[i, j] = new Cell(i, j, line[j], SymbolSet);
+          var value = line[j];
+          if (value == '-')
+          {
+            Grid[i, j] = new Cell(i, j, value, SymbolSet);
+          }
+          else
+          {
+            Grid[i, j] = new Cell(i, j, value, new List<char>());
+          }
         }
       }
     }
