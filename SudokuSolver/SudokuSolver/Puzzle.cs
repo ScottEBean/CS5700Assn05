@@ -11,12 +11,13 @@ namespace SudokuSolver
   {
     public int Size { get; private set; }
     public int SuperCellSize { get; private set; }
+    public int SolvedCellCount { get; set; }
 
     public Cell[,] OriginalGrid { get; private set; }
-    public Cell[,] Grid { get; private set; }
+    public Cell[,] Grid { get; set; }
     public List<char> SymbolSet { get; private set; }
 
-    public Puzzle( int size, Cell[,] grid, List<char> symbolSet )
+    public Puzzle( int size, Cell[,] grid, List<char> symbolSet, int solvedCount )
     {
       Size = size;
       SuperCellSize = Convert.ToInt32(Math.Sqrt(Size));
@@ -24,6 +25,7 @@ namespace SudokuSolver
       Grid = new Cell[Size, Size];
       GridDeepCopy(grid);
       SymbolSet = new List<char>(symbolSet);
+      SolvedCellCount = solvedCount;
     }
 
     private void GridDeepCopy( Cell[,] grid )
@@ -60,9 +62,9 @@ namespace SudokuSolver
       }
 
       // Check houses for complete sets
-      for (int i = 0; i < Size; i += SuperCellSize)
+      for (int i = 0; i < Size - SuperCellSize; i += SuperCellSize)
       {
-        for (int j = 0; j < Size; i += SuperCellSize)
+        for (int j = 0; j < Size - SuperCellSize; j += SuperCellSize)
         {
           if(!IsHouseSolved(i, j))
           {
@@ -137,7 +139,8 @@ namespace SudokuSolver
 
       var cellArr = new List<Cell>(Size);
 
-      GetTopLeft(row, col, out int tlRow, out int tlCol);
+      GetTopRow(row, out int tlRow);
+      GetTopCol(col, out int tlCol);
       
 
       for (int i = tlRow; i < tlRow + SuperCellSize; i++)
@@ -151,14 +154,29 @@ namespace SudokuSolver
       return cellArr.ToArray();
     }
 
-    private void GetTopLeft( int row, int col, out int tlRow, out int tlCol)
+    private void GetTopRow( int row,  out int tlRow)
     {
-      tlRow = -1;
+      tlRow = -1;      
+      for (int i = SuperCellSize; i > 0; i--)
+      {
+        if (row >= i * SuperCellSize - SuperCellSize)
+        {
+          tlRow = i * SuperCellSize - SuperCellSize;
+          return;
+        }        
+      }      
+    }
+
+    private void GetTopCol( int col, out int tlCol )
+    {
       tlCol = -1;
       for (int i = SuperCellSize; i > 0; i--)
       {
-        if (row >= i * SuperCellSize - SuperCellSize) { tlRow = i * SuperCellSize - SuperCellSize; }
-        if (col >= i * SuperCellSize - SuperCellSize) { tlCol = i * SuperCellSize - SuperCellSize; }
+        if (col >= i * SuperCellSize - SuperCellSize)
+        {
+          tlCol = i * SuperCellSize - SuperCellSize;
+          return;
+        }
       }
     }
 
@@ -188,12 +206,64 @@ namespace SudokuSolver
 
       var cellArr = new List<Cell>(Size);
 
-      for (int j = row; j < Size; j++)
+      for (int j = 0; j < Size; j++)
       {
         cellArr.Add(Grid[row, j]);
       }
 
       return cellArr.ToArray();
+    }
+
+    public void ConsolePrint( List<PuzzleSolver> solverList )
+    {
+      Console.WriteLine(Size);
+      for (int i = 0; i < Size; i++)
+      {
+        Console.Write($"{SymbolSet[i]} ");
+      }
+
+      Console.WriteLine();
+
+      for (int i = 0; i < Size; i++)
+      {
+        for (int j = 0; j < Size; j++)
+        {
+          Console.Write($"{OriginalGrid[i, j].Value} ");
+        }
+        Console.WriteLine();
+      }
+
+      Console.WriteLine("Solution:");
+
+      for (int i = 0; i < Size; i++)
+      {
+        for (int j = 0; j < Size; j++)
+        {
+          Console.Write($"{Grid[i, j].Value} ");
+        }
+        Console.WriteLine();        
+      }
+
+      Console.WriteLine();
+      var ts = new TimeSpan();
+      foreach(var template in solverList)
+      {
+        ts += template.SolveTimer.Elapsed;
+      }
+
+      string elapsedTime = ts.ToString("G");
+
+      Console.WriteLine($"Total Time: {elapsedTime}");
+      Console.WriteLine();
+      Console.WriteLine("{0,-23} {1,-12} {2,-23}\n",
+                        "Strategy", "Uses", "Time");
+
+      foreach (var template in solverList)
+      {
+        string time = template.SolveTimer.Elapsed.ToString("G");
+        Console.WriteLine("{0,-23} {1,-12} {2,-23}",
+                        template.Name, template.Count, time);
+      }
     }
 
     public void ConsolePrint( )
@@ -225,6 +295,65 @@ namespace SudokuSolver
         }
         Console.WriteLine();
       }
+    }
+
+    public void FilePrint( string outputFilePath, List<PuzzleSolver> solverList )
+    {
+      FileStream fileStream = new FileStream(outputFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+      StreamWriter fileWriter = new StreamWriter(fileStream);
+
+      fileWriter.WriteLine(Size);
+
+      for (int i = 0; i < Size; i++)
+      {
+        fileWriter.Write($"{SymbolSet[i]} ");
+      }
+
+      fileWriter.WriteLine();
+
+      for (int i = 0; i < Size; i++)
+      {
+        for (int j = 0; j < Size; j++)
+        {
+          fileWriter.Write($"{OriginalGrid[i, j].Value} ");
+        }
+        fileWriter.WriteLine();
+      }
+
+      fileWriter.WriteLine("Solution:");
+
+      for (int i = 0; i < Size; i++)
+      {
+        for (int j = 0; j < Size; j++)
+        {
+          fileWriter.Write($"{Grid[i, j].Value} ");
+        }
+        fileWriter.WriteLine();
+      }
+
+      fileWriter.WriteLine();
+      var ts = new TimeSpan();
+      foreach (var template in solverList)
+      {
+        ts += template.SolveTimer.Elapsed;
+      }
+
+      string elapsedTime = ts.ToString("G");
+
+      fileWriter.WriteLine($"Total Time: {elapsedTime}");
+      fileWriter.WriteLine();
+      fileWriter.WriteLine("{0,-23} {1,-12} {2,-23}\n",
+                        "Strategy", "Uses", "Time");
+
+      foreach (var template in solverList)
+      {
+        string time = template.SolveTimer.Elapsed.ToString("G");
+        fileWriter.WriteLine("{0,-23} {1,-12} {2,-23}",
+                        template.Name, template.Count, time);
+      }
+
+      fileWriter.Close();
+      fileStream.Close();
     }
 
     public void FilePrint( string outputFilePath )
@@ -260,9 +389,6 @@ namespace SudokuSolver
         }
         fileWriter.WriteLine();
       }
-
-      fileWriter.Close();
-      fileStream.Close();
     }
   }
 }

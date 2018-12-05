@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace SudokuSolver
 {
-  class Program
+  public class Program
   {
+    
+
     static void Main( string[] args )
     {
       string inputFilePath = null;
@@ -16,7 +18,7 @@ namespace SudokuSolver
       string inputDirectory = null;
       string outputDirectory = null;
       List<Puzzle> puzzles = new List<Puzzle>();
-      Puzzle puzzle = null;
+      List<PuzzleSolver> templateList = new List<PuzzleSolver>();
 
       if (args.Length == 0)
       {
@@ -65,7 +67,7 @@ namespace SudokuSolver
       }
 
 
-      if (inputDirectory.Length > 1)
+      if (!String.IsNullOrEmpty(inputDirectory))
       {
         var inputFiles = Directory.EnumerateFiles(inputDirectory, "*.txt");
         foreach (var file in inputFiles)
@@ -75,14 +77,65 @@ namespace SudokuSolver
       }
       else
       {
-        puzzle = new PuzzleCreator(inputFilePath).CreatePuzzle();
+        puzzles.Add(new PuzzleCreator(inputFilePath).CreatePuzzle());
       }
+
+      foreach(var puzzle in puzzles)
+      {        
+        templateList.Add(new RowReducerSolver(puzzle));
+        templateList.Add(new ColReducerSolver(puzzle));
+        templateList.Add(new HouseReducerSolver(puzzle));
+        templateList.Add(new LastOptionSolver(puzzle));
+        templateList.Add(new OneOptionSolver(puzzle));
+        
+
+        Solve(puzzle, templateList);
+        //puzzle.ConsolePrint();
+        //puzzle.FilePrint(outputFilePath);
+
+      }
+
 
       //do stuff on puzzles or puzzle here
 
 
-      Console.WriteLine("\n\nPress Any Key to Exit");
-      Console.ReadLine();
+      //Console.WriteLine("\n\nPress Any Key to Exit");
+      //Console.ReadLine();
+    }
+
+    public static void Solve( Puzzle puzzle, List<PuzzleSolver> templateList )
+    {
+      var solvedCount = puzzle.SolvedCellCount;
+      var prevSolvedCount = 0;
+      while (solvedCount > prevSolvedCount && !puzzle.IsSolved())
+      {
+        prevSolvedCount = puzzle.SolvedCellCount;
+
+        for (int i = 0; i < puzzle.Size; i++)
+        {
+          for (int j = 0; j < puzzle.Size; j++)
+          {
+            templateList[0].SolvePoint(i, j);
+            templateList[1].SolvePoint(i, j);
+            templateList[2].SolvePoint(i, j);
+            templateList[3].SolvePoint(i, j);
+            templateList[4].SolvePoint(i, j);
+
+            if (puzzle.IsSolved())
+            {
+              break;
+            }
+          }
+          
+          if (puzzle.IsSolved())
+          {
+            break;
+          }
+        }
+
+        solvedCount = puzzle.SolvedCellCount;
+      }
+      puzzle.ConsolePrint(templateList);
     }
   }
 }

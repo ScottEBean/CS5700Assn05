@@ -13,16 +13,18 @@ namespace SudokuSolver
     public override void SolvePoint( int row, int col )
     {
       SolveTimer.Start();
+      
+      if (Sudoku.Grid[row, col].Value != '-') { SolveTimer.Stop(); return; }
+      Count++;
+      var house = Sudoku.GetHouse(row, col);
 
-      for (int i = row; i < row + Sudoku.SuperCellSize; i++)
+      for (int i = 0; i < Sudoku.Size; i++)
       {
-        for (int j = col; j < col + Sudoku.SuperCellSize; j++)
+        if (row == house[i].Row && col == house[i].Col) { continue; }
+
+        if (Sudoku.Grid[row, col].ValidOptions.Contains(house[i].Value))
         {
-          if(i == row && j == col) { continue; }
-          if (Sudoku.Grid[row, col].ValidOptions.Contains(Sudoku.Grid[i,j].Value))
-          {
-            Sudoku.Grid[row, col].ValidOptions.Remove(Sudoku.Grid[i, j].Value);
-          }
+          Sudoku.Grid[row, col].ValidOptions.Remove(house[i].Value);
         }
       }
 

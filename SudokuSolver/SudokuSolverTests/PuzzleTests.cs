@@ -14,10 +14,10 @@ namespace SudokuSolver.Tests
   public class PuzzleTests
   {
     readonly string invalidInputPath0 = "InvalidInputPath.txt";
-    readonly string invalidPuzzlePath0 = "C:/OOProjects/Assn04/SudokuSolver/SudokuSolver/17x17invalid.txt";
-    readonly string testInputPath0 = "C:/OOProjects/Assn04/SudokuSolver/SudokuSolver/16X16.txt";
-    readonly string testInputPath1 = "C:/OOProjects/Assn04/SudokuSolver/SudokuSolver/Solved4x4.txt";
-    readonly string testOutputPath = "C:/OOProjects/Assn04/SudokuSolver/SudokuSolver/bin/Debug/testOutput.txt";
+    readonly string invalidPuzzlePath0 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/17x17invalid.txt";
+    readonly string testInputPath0 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/16X16.txt";
+    readonly string testInputPath1 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/Solved4x4.txt";
+    readonly string testOutputPath = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/bin/Debug/testOutput.txt";
     List<char> testSymbolSet0 = new List<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
     List<char> testSymbolSet1 = new List<char> { '1', '2', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 
@@ -84,7 +84,7 @@ namespace SudokuSolver.Tests
 
       var expectedOptions = new List<char> { '4' };
       listEquality = testCreator.Grid[0, 0].ValidOptions.All(expectedOptions.Contains) && testCreator.Grid[0, 0].ValidOptions.Count == expectedOptions.Count;
-      Assert.IsTrue(listEquality);
+      Assert.IsFalse(listEquality);
 
 
       listEquality = testCreator.Grid[0, 2].ValidOptions.All(testSymbolSet0.Contains) && testCreator.Grid[0, 2].ValidOptions.Count == testSymbolSet0.Count;
@@ -127,7 +127,7 @@ namespace SudokuSolver.Tests
 
       var expectedOptions = new List<char> { '4' };
       listEquality = testPuzzle.Grid[0, 0].ValidOptions.All(expectedOptions.Contains) && testPuzzle.Grid[0, 0].ValidOptions.Count == expectedOptions.Count;
-      Assert.IsTrue(listEquality);
+      Assert.IsFalse(listEquality);
 
 
       listEquality = testPuzzle.Grid[0, 2].ValidOptions.All(testSymbolSet0.Contains) && testPuzzle.Grid[0, 2].ValidOptions.Count == testSymbolSet0.Count;
@@ -167,7 +167,7 @@ namespace SudokuSolver.Tests
       testPuzzle.FilePrint(testOutputPath);
 
       Assert.IsTrue(File.Exists(testOutputPath));
-      // Please see the file located at C:/OOProjects/Assn04/SudokuSolver/SudokuSolver/bin/Debug/testOuput.txt
+      // Please see the file located at C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/bin/Debug/testOuput.txt
       // for results
     }
 

@@ -10,6 +10,7 @@ namespace SudokuSolver
 {
   public abstract class PuzzleSolver
   {
+    public int Count { get; protected set; }
     public string Name { get; protected set; }
     public Stopwatch SolveTimer { get; protected set; }
     public Puzzle Sudoku { get; protected set; }
@@ -17,53 +18,11 @@ namespace SudokuSolver
     public PuzzleSolver(Puzzle puzzle )
     {
       Sudoku = puzzle;
+      SolveTimer = new Stopwatch();
+      Count = 0;
     }
 
-    public bool IsSolution()
-    {
-      if (!Sudoku.IsSolved()) { return false; }
-      return true;
-    }
-
-    //public bool SolvePuzzle()
-    //{
-    //  bool notFinished = true;
-    //  while (notFinished)
-    //  {
-    //    notFinished = false;
-    //    for (int i = 0; i < Sudoku.Size; i++)
-    //    {
-    //      for (int j = 0; j < Sudoku.Size; j++)
-    //      {
-    //        if(Sudoku.Grid[i,j].Value == '-')
-    //        {
-    //          notFinished = SolvePoint(i, j) ? true : false;
-    //        }
-    //      }
-    //    }
-    //  }
-
-    //  return Sudoku.IsSolved();      
-    //}    
-
-    protected bool HasCompleteSet( Cell[] superCell)
-    {
-       
-      var currentValues = new List<char> { };
-      for (int i = 0; i < Sudoku.Size; i++)
-      {
-        currentValues.Add(superCell[i].Value);
-      }
-
-      var listEquality = currentValues.All(Sudoku.SymbolSet.Contains) && currentValues.Count == Sudoku.SymbolSet.Count;
-
-      if (listEquality)
-      {
-        return true;
-      }
-
-      return false;
-    }
+    
 
     public abstract void SolvePoint(int row, int col );
     

@@ -37,7 +37,7 @@ namespace SudokuSolver
       }
       else
       {
-        ValidOptions = new List<char> { value };
+        ValidOptions = new List<char> ();
       }
     }
 

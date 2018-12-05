@@ -45,6 +45,7 @@
     <Compile Include="Cell.cs" />
     <Compile Include="ColReducerSolver.cs" />
     <Compile Include="HouseReducerSolver.cs" />
+    <Compile Include="LastOptionSolver.cs" />
     <Compile Include="OneOptionSolver.cs" />
     <Compile Include="PuzzleCreator.cs" />
     <Compile Include="PuzzleSolver.cs" />
@@ -61,6 +62,7 @@
     <Content Include="17x17invalid.txt" />
     <Content Include="4x4.txt" />
     <Content Include="bin\Debug\testOutput.txt" />
+    <Content Include="Puzzle-9x9-0001.txt" />
     <Content Include="Solved4x4.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

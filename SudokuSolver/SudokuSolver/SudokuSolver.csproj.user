@@ -3,4 +3,7 @@
   <PropertyGroup>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartArguments>"C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/Puzzle-9x9-0001.txt" "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/bin/Debug/testOutput.txt"</StartArguments>
+  </PropertyGroup>
 </Project>

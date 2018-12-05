@@ -11,10 +11,11 @@ namespace SudokuSolver
   {
     public Cell[,] Grid { get; private set; }
     public int PuzzleSize { get; private set; }
+    public int SolvedCellCount { get; private set; }
     public List<char> SymbolSet { get; private set; }
     public FileStream InputFileStream { get; private set; }
     public StreamReader InputFileReader { get; private set; }
-    
+
 
     public PuzzleCreator( string inputPath )
     {
@@ -26,13 +27,14 @@ namespace SudokuSolver
       InputFileStream = new FileStream(inputPath, FileMode.Open, FileAccess.Read);
       InputFileReader = new StreamReader(InputFileStream);
 
+
       SetPuzzleSize();
       SetSymbols();
       SetGrid();
 
       InputFileStream.Close();
       InputFileReader.Close();
-    }    
+    }
 
     private void SetPuzzleSize( )
     {
@@ -67,21 +69,15 @@ namespace SudokuSolver
         for (int j = 0; j < PuzzleSize; j++)
         {
           var value = line[j];
-          if (value == '-')
-          {
-            Grid[i, j] = new Cell(i, j, value, SymbolSet);
-          }
-          else
-          {
-            Grid[i, j] = new Cell(i, j, value, new List<char>());
-          }
+          if(value != '-') { SolvedCellCount++; }
+          Grid[i, j] = new Cell(i, j, value, SymbolSet);
         }
       }
     }
 
     public Puzzle CreatePuzzle( )
     {
-      return new Puzzle(PuzzleSize, Grid, SymbolSet);
+      return new Puzzle(PuzzleSize, Grid, SymbolSet, SolvedCellCount);
     }
   }
 }
