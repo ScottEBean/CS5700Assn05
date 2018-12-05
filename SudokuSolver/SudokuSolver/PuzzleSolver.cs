@@ -26,10 +26,5 @@ namespace SudokuSolver
 
     public abstract void SolvePoint(int row, int col );
     
-    public string PrintTime( )
-    {
-      var output = $"{Name}: {SolveTimer.Elapsed}";
-      return output;
-    }
   }
 }

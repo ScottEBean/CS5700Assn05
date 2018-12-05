@@ -18,7 +18,7 @@ namespace SudokuSolver
       string inputDirectory = null;
       string outputDirectory = null;
       List<Puzzle> puzzles = new List<Puzzle>();
-      List<PuzzleSolver> templateList = new List<PuzzleSolver>();
+      List<PuzzleSolver> templates = new List<PuzzleSolver>();
 
       if (args.Length == 0)
       {
@@ -82,25 +82,14 @@ namespace SudokuSolver
 
       foreach(var puzzle in puzzles)
       {        
-        templateList.Add(new RowReducerSolver(puzzle));
-        templateList.Add(new ColReducerSolver(puzzle));
-        templateList.Add(new HouseReducerSolver(puzzle));
-        templateList.Add(new LastOptionSolver(puzzle));
-        templateList.Add(new OneOptionSolver(puzzle));
-        
+        templates.Add(new RowReducerSolver(puzzle));
+        templates.Add(new ColReducerSolver(puzzle));
+        templates.Add(new HouseReducerSolver(puzzle));
+        templates.Add(new LastOptionSolver(puzzle));
+        templates.Add(new OneOptionSolver(puzzle));        
 
-        Solve(puzzle, templateList);
-        //puzzle.ConsolePrint();
-        //puzzle.FilePrint(outputFilePath);
-
+        Solve(puzzle, templates);
       }
-
-
-      //do stuff on puzzles or puzzle here
-
-
-      //Console.WriteLine("\n\nPress Any Key to Exit");
-      //Console.ReadLine();
     }
 
     public static void Solve( Puzzle puzzle, List<PuzzleSolver> templateList )
