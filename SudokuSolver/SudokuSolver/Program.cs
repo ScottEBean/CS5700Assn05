@@ -9,7 +9,7 @@ namespace SudokuSolver
 {
   public class Program
   {
-    
+
 
     static void Main( string[] args )
     {
@@ -41,7 +41,7 @@ namespace SudokuSolver
         return;
       }
 
-      if(args.Length > 1)
+      if (args.Length > 1)
       {
         if (Directory.Exists(args[0]))
         {
@@ -72,7 +72,16 @@ namespace SudokuSolver
         var inputFiles = Directory.EnumerateFiles(inputDirectory, "*.txt");
         foreach (var file in inputFiles)
         {
-          puzzles.Add(new PuzzleCreator(inputFilePath).CreatePuzzle());
+          try
+          {
+            inputFilePath = file;
+            puzzles.Add(new PuzzleCreator(inputFilePath).CreatePuzzle());
+          }
+          catch (Exception e)
+          {
+            Console.Write(e.Message);
+            Console.WriteLine(" - " + file.ToString());
+          }
         }
       }
       else
@@ -80,16 +89,32 @@ namespace SudokuSolver
         puzzles.Add(new PuzzleCreator(inputFilePath).CreatePuzzle());
       }
 
-      foreach(var puzzle in puzzles)
-      {        
+      foreach (var puzzle in puzzles)
+      {
+        templates.Clear();
         templates.Add(new RowReducerSolver(puzzle));
         templates.Add(new ColReducerSolver(puzzle));
         templates.Add(new HouseReducerSolver(puzzle));
         templates.Add(new LastOptionSolver(puzzle));
-        templates.Add(new OneOptionSolver(puzzle));        
+        templates.Add(new OneOptionSolver(puzzle));
 
         Solve(puzzle, templates);
-      }
+
+        if (String.IsNullOrEmpty(outputDirectory) && String.IsNullOrEmpty(outputFilePath))
+        {
+          puzzle.ConsolePrint(templates);
+        }
+
+        if (!String.IsNullOrEmpty(outputDirectory))
+        {
+          puzzle.FilePrint(outputDirectory, templates);
+        }
+
+        if (!String.IsNullOrEmpty(outputFilePath))
+        {
+          puzzle.FilePrint(outputFilePath, templates);
+        }
+      }      
     }
 
     public static void Solve( Puzzle puzzle, List<PuzzleSolver> templateList )
@@ -115,7 +140,7 @@ namespace SudokuSolver
               break;
             }
           }
-          
+
           if (puzzle.IsSolved())
           {
             break;
@@ -124,7 +149,6 @@ namespace SudokuSolver
 
         solvedCount = puzzle.SolvedCellCount;
       }
-      puzzle.ConsolePrint(templateList);
     }
   }
 }

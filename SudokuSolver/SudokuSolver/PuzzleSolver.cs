@@ -22,9 +22,6 @@ namespace SudokuSolver
       Count = 0;
     }
 
-    
-
-    public abstract void SolvePoint(int row, int col );
-    
+    public abstract void SolvePoint(int row, int col );    
   }
 }

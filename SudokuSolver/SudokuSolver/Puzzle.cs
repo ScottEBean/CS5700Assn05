@@ -12,13 +12,15 @@ namespace SudokuSolver
     public int Size { get; private set; }
     public int SuperCellSize { get; private set; }
     public int SolvedCellCount { get; set; }
+    public string Name { get; set; }
 
     public Cell[,] OriginalGrid { get; private set; }
     public Cell[,] Grid { get; set; }
     public List<char> SymbolSet { get; private set; }
 
-    public Puzzle( int size, Cell[,] grid, List<char> symbolSet, int solvedCount )
+    public Puzzle( int size, Cell[,] grid, List<char> symbolSet, int solvedCount, string name )
     {
+      Name = name;
       Size = size;
       SuperCellSize = Convert.ToInt32(Math.Sqrt(Size));
       OriginalGrid = new Cell[Size, Size];
@@ -128,8 +130,7 @@ namespace SudokuSolver
 
       return true;
     }
-
-
+    
     public Cell[] GetHouse( int row, int col )
     {
       if (row < 0 || row > Size - 1 || col < 0 || col > Size - 1)
@@ -216,6 +217,7 @@ namespace SudokuSolver
 
     public void ConsolePrint( List<PuzzleSolver> solverList )
     {
+      Console.WriteLine();
       Console.WriteLine(Size);
       for (int i = 0; i < Size; i++)
       {
@@ -268,6 +270,7 @@ namespace SudokuSolver
 
     public void ConsolePrint( )
     {
+      Console.WriteLine();
       Console.WriteLine(Size);
       for (int i = 0; i < Size; i++)
       {
@@ -297,9 +300,24 @@ namespace SudokuSolver
       }
     }
 
-    public void FilePrint( string outputFilePath, List<PuzzleSolver> solverList )
+    public void FilePrint( string outputPath, List<PuzzleSolver> solverList )
     {
-      FileStream fileStream = new FileStream(outputFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+      string path = null;
+      if(outputPath.Last() == '\\' || outputPath.Last() == '/')
+      {
+        if (!Directory.Exists(outputPath))
+        {
+          Directory.CreateDirectory(outputPath);
+        }
+
+        path = outputPath + Name + ".txt";
+      }
+      else
+      {
+        path = outputPath;
+      }
+
+      FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
       StreamWriter fileWriter = new StreamWriter(fileStream);
 
       fileWriter.WriteLine(Size);

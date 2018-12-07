@@ -15,7 +15,7 @@ namespace SudokuSolver.Tests
   {
     readonly string invalidInputPath0 = "InvalidInputPath.txt";
     readonly string invalidPuzzlePath0 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/17x17invalid.txt";
-    readonly string testInputPath0 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/16X16.txt";
+    readonly string testInputPath0 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/Puzzle-16x16-0001.txt";
     readonly string testInputPath1 = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/Solved4x4.txt";
     readonly string testOutputPath = "C:/OOProjects/Assn05/SudokuSolver/SudokuSolver/bin/Debug/testOutput.txt";
     List<char> testSymbolSet0 = new List<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
@@ -26,8 +26,8 @@ namespace SudokuSolver.Tests
     public void CellWithValueConstructorTest( )
     {
       var testCell = new Cell(0, 0, '4', new List<char> { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G' });
-      var expectedValidOptions = new List<char> { '4' };
-      var listEquality = testCell.ValidOptions.All(expectedValidOptions.Contains) && testCell.ValidOptions.Count == 1;
+      var expectedValidOptions = new List<char> ();
+      var listEquality = testCell.ValidOptions.All(expectedValidOptions.Contains) && testCell.ValidOptions.Count == 0;
 
       Assert.AreEqual(0, testCell.Row);
       Assert.AreEqual(0, testCell.Col);
@@ -78,13 +78,13 @@ namespace SudokuSolver.Tests
       var listEquality = testCreator.SymbolSet.All(expectedSymbolSet.Contains) && testCreator.SymbolSet.Count == expectedSymbolSet.Count;
       Assert.AreEqual(testCreator.PuzzleSize, 16);
       Assert.IsTrue(listEquality);
-      Assert.AreEqual(testCreator.Grid[0, 0].Value, '4');
-      Assert.AreEqual(testCreator.Grid[0, 1].Value, '9');
+      Assert.AreEqual(testCreator.Grid[0, 0].Value, '7');
+      Assert.AreEqual(testCreator.Grid[0, 1].Value, '1');
       Assert.AreEqual(testCreator.Grid[0, 2].Value, '-');
 
-      var expectedOptions = new List<char> { '4' };
+      var expectedOptions = new List<char> ();
       listEquality = testCreator.Grid[0, 0].ValidOptions.All(expectedOptions.Contains) && testCreator.Grid[0, 0].ValidOptions.Count == expectedOptions.Count;
-      Assert.IsFalse(listEquality);
+      Assert.IsTrue(listEquality);
 
 
       listEquality = testCreator.Grid[0, 2].ValidOptions.All(testSymbolSet0.Contains) && testCreator.Grid[0, 2].ValidOptions.Count == testSymbolSet0.Count;
@@ -109,7 +109,7 @@ namespace SudokuSolver.Tests
       }
       catch (Exception e)
       {
-        Assert.AreEqual(e.Message, "Invalid puzzle size");
+        Assert.AreEqual(e.Message, "Invalid puzzle: Invalid puzzle size");
       }
 
     }
@@ -121,11 +121,11 @@ namespace SudokuSolver.Tests
       var listEquality = testPuzzle.SymbolSet.All(testSymbolSet0.Contains) && testPuzzle.SymbolSet.Count == testSymbolSet0.Count;
       Assert.AreEqual(testPuzzle.PuzzleSize, 16);
       Assert.IsTrue(listEquality);
-      Assert.AreEqual(testPuzzle.Grid[0, 0].Value, '4');
-      Assert.AreEqual(testPuzzle.Grid[0, 1].Value, '9');
+      Assert.AreEqual(testPuzzle.Grid[0, 0].Value, '7');
+      Assert.AreEqual(testPuzzle.Grid[0, 1].Value, '1');
       Assert.AreEqual(testPuzzle.Grid[0, 2].Value, '-');
 
-      var expectedOptions = new List<char> { '4' };
+      var expectedOptions = new List<char> { '7' };
       listEquality = testPuzzle.Grid[0, 0].ValidOptions.All(expectedOptions.Contains) && testPuzzle.Grid[0, 0].ValidOptions.Count == expectedOptions.Count;
       Assert.IsFalse(listEquality);
 

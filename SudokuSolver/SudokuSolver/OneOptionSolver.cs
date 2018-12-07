@@ -12,17 +12,17 @@ namespace SudokuSolver
     public OneOptionSolver( Puzzle puzzle ) : base(puzzle) { Name = "One Option Solver"; }
 
     public override void SolvePoint( int row, int col )
-    {
+    {      
+      if (Sudoku.Grid[row, col].Value != '-') { return; }
+
       SolveTimer.Start();
-      
-      if (Sudoku.Grid[row, col].Value != '-') { SolveTimer.Stop(); return; }
       Count++;
+
       OneOption(row, col, Sudoku.GetHouse(row, col));
       OneOption(row, col, Sudoku.GetSuperRow(row));
       OneOption(row, col, Sudoku.GetSuperCol(col));
 
       SolveTimer.Stop();
-
     }
 
     private void OneOption( int row, int col, Cell[] superCell )
@@ -42,5 +42,6 @@ namespace SudokuSolver
         Sudoku.SolvedCellCount++;        
       }
     }
+
   }
 }
